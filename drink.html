@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧋 เครื่องดื่มประจำสัปดาห์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-1: #fff5f7;
+            --bg-2: #fef5ff;
+            --bg-3: #f0f8ff;
+            --surface: #ffffff;
+            --text: #4a3a4a;
+            --text-soft: #9a8a9a;
+            --text-mute: #bbb0bb;
+            --border: #f0e5ec;
+            --primary: #ff8da1;
+            --primary-dark: #ff6e88;
+            --primary-soft: #ffe4ea;
+            --secondary: #a8e6cf;
+            --accent: #ffd66b;
+            --lavender: #c7a8ff;
+            --error: #e85a72;
+
+            --mon: #fff3b0;
+            --tue: #ffd6e0;
+            --wed: #c8efc8;
+            --thu: #ffdcb8;
+            --fri: #c8dfff;
+            --mon-deep: #f9a826;
+            --tue-deep: #e91e63;
+            --wed-deep: #4caf50;
+            --thu-deep: #ff8c42;
+            --fri-deep: #4a90e2;
+
+            --shadow-sm: 0 2px 8px rgba(255, 141, 161, 0.08);
+            --shadow: 0 8px 24px rgba(255, 141, 161, 0.12);
+            --shadow-lg: 0 16px 40px rgba(255, 141, 161, 0.18);
+            --radius: 24px;
+            --radius-sm: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Mali', 'Sarabun', sans-serif;
+            background:
+                radial-gradient(circle at 10% 0%, var(--bg-1) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, var(--bg-2) 0%, transparent 45%),
+                radial-gradient(circle at 50% 100%, var(--bg-3) 0%, transparent 55%),
+                #fffafd;
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            padding: 24px 16px 64px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* === Header === */
+        .header {
+            text-align: center;
+            padding: 24px 0 32px;
+        }
+
+        .header h1 {
+            font-size: clamp(28px, 5vw, 40px);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-dark), var(--lavender));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-soft);
+            font-size: 16px;
+        }
+
+        .header .decor {
+            display: inline-block;
+            margin: 0 6px;
+            animation: bob 2.4s ease-in-out infinite;
+        }
+        .header .decor:nth-child(2) { animation-delay: 0.3s; }
+        .header .decor:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes bob {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-6px) rotate(3deg); }
+        }
+
+        /* === Card === */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 28px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text);
+        }
+
+        .card-title .badge {
+            font-size: 13px;
+            font-weight: 500;
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        /* === Form === */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 560px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        .field { position: relative; }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-soft);
+            margin-bottom: 6px;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            font-size: 15px;
+            font-family: inherit;
+            color: var(--text);
+            background: #fffdfd;
+            transition: all 0.2s;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px var(--primary-soft);
+        }
+
+        .field input.error {
+            border-color: var(--error);
+            background: #fff5f6;
+        }
+
+        .field .err-msg {
+            color: var(--error);
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .field.has-error .err-msg { display: block; }
+
+        /* === Buttons === */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 6px 18px rgba(255, 110, 136, 0.35);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 10px 24px rgba(255, 110, 136, 0.45);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-soft);
+            padding: 10px 14px;
+        }
+        .btn-ghost:hover { background: var(--primary-soft); color: var(--primary-dark); }
+
+        .btn-block { width: 100%; }
+
+        /* === Welcome === */
+        .welcome {
+            background: linear-gradient(135deg, var(--primary-soft), #f0e7ff);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .welcome-text { font-size: 16px; }
+        .welcome-text strong { color: var(--primary-dark); }
+
+        /* === Participants === */
+        .participants {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        .person {
+            background: linear-gradient(180deg, #ffffff 0%, #fff8fb 100%);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 20px 12px;
+            text-align: center;
+            transition: all 0.25s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .person:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .person.highlight {
+            animation: pulse-pop 0.5s ease;
+            border-color: var(--primary);
+            background: linear-gradient(180deg, #fff5f9 0%, #fde4ec 100%);
+        }
+
+        @keyframes pulse-pop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .person .avatar {
+            font-size: 44px;
+            line-height: 1;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .person .name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .person .meta {
+            color: var(--text-mute);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* === Draw === */
+        .draw-card {
+            text-align: center;
+            background: linear-gradient(135deg, #fff 0%, #fff8fc 100%);
+        }
+
+        .draw-btn {
+            font-size: 18px;
+            padding: 18px 36px;
+            background: linear-gradient(135deg, #ff8da1 0%, #c7a8ff 50%, #a8e6cf 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(199, 168, 255, 0.4);
+            transition: all 0.25s;
+            font-family: inherit;
+        }
+
+        .draw-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 16px 36px rgba(199, 168, 255, 0.5);
+        }
+
+        .draw-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .draw-hint {
+            color: var(--text-soft);
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        /* === Week schedule === */
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 22px;
+            padding: 20px 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid transparent;
+        }
+
+        .day-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 22px;
+            background: var(--day-color, var(--mon));
+            opacity: 0.55;
+            z-index: 0;
+        }
+
+        .day-card > * { position: relative; z-index: 1; }
+
+        .day-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .day-card.mon { --day-color: var(--mon); --deep: var(--mon-deep); }
+        .day-card.tue { --day-color: var(--tue); --deep: var(--tue-deep); }
+        .day-card.wed { --day-color: var(--wed); --deep: var(--wed-deep); }
+        .day-card.thu { --day-color: var(--thu); --deep: var(--thu-deep); }
+        .day-card.fri { --day-color: var(--fri); --deep: var(--fri-deep); }
+
+        .day-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .day-avatar {
+            font-size: 56px;
+            line-height: 1;
+            margin: 4px 0;
+        }
+
+        .day-avatar.empty {
+            font-size: 48px;
+            opacity: 0.35;
+        }
+
+        .day-name {
+            font-weight: 700;
+            font-size: 17px;
+            color: var(--text);
+            margin: 4px 0;
+        }
+
+        .day-name.empty {
+            color: var(--text-mute);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .day-menu {
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.7);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .day-amount {
+            margin-top: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--deep);
+        }
+
+        .day-actions {
+            margin-top: auto;
+            padding-top: 12px;
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .day-btn {
+            padding: 8px 14px;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .day-btn:hover {
+            background: var(--deep);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .day-btn.primary {
+            background: var(--deep);
+            color: white;
+        }
+
+        .day-btn.primary:hover { filter: brightness(1.05); }
+
+        /* === Empty state === */
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            color: var(--text-soft);
+        }
+
+        .empty-state .emo {
+            font-size: 56px;
+            margin-bottom: 12px;
+            display: inline-block;
+            animation: bob 2s ease-in-out infinite;
+        }
+
+        /* === Modal === */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(74, 58, 74, 0.45);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+            animation: fadeIn 0.2s;
+        }
+
+        .modal-backdrop.show { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius);
+            padding: 28px;
+            max-width: 460px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header .avatar {
+            font-size: 56px;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .modal-header p {
+            color: var(--text-soft);
+            font-size: 14px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--primary-soft);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 18px;
+            color: var(--primary-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        /* === Category picker === */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .cat-btn {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 18px;
+            padding: 18px 8px;
+            text-align: center;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .cat-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .cat-btn.selected {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .cat-emoji {
+            font-size: 38px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .cat-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* === Menu suggestions === */
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .chip {
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .chip:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* === QR Modal === */
+        .qr-wrap {
+            text-align: center;
+            background: linear-gradient(135deg, #fffaf2, #fff0f4);
+            padding: 20px;
+            border-radius: 18px;
+            margin-bottom: 16px;
+        }
+
+        .qr-wrap img {
+            max-width: 240px;
+            width: 100%;
+            border-radius: 12px;
+            background: white;
+            padding: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .qr-amount {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-top: 12px;
+        }
+
+        .qr-note {
+            color: var(--text-soft);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .summary {
+            background: #fffafd;
+            border: 1px solid var(--primary-soft);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .summary .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+
+        .summary .row.total {
+            border-top: 1px dashed var(--primary-soft);
+            margin-top: 6px;
+            padding-top: 10px;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        /* === Confetti === */
+        .confetti {
+            position: fixed;
+            top: -10px;
+            width: 10px;
+            height: 14px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 200;
+        }
+
+        .confetti.go {
+            animation: fall 2s ease-out forwards;
+        }
+
+        @keyframes fall {
+            0% { opacity: 1; transform: translateY(0) rotate(0); }
+            100% { opacity: 0; transform: translateY(105vh) rotate(720deg); }
+        }
+
+        /* === Toast === */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            z-index: 300;
+            font-size: 14px;
+            transition: transform 0.3s;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        .reset-bar {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <h1>
+                <span class="decor">🧋</span>
+                เครื่องดื่มประจำสัปดาห์
+                <span class="decor">☕</span>
+                <span class="decor">🍦</span>
+            </h1>
+            <p>สุ่มคนเลือกเครื่องดื่ม จันทร์–ศุกร์ พร้อม QR เก็บตังแบบขุนทอง 💸</p>
+        </div>
+
+        <!-- Registration -->
+        <section class="card" id="registerCard">
+            <div class="card-title">
+                ✨ ลงทะเบียนเข้าร่วม
+                <span class="badge">ก่อนเริ่มเล่น</span>
+            </div>
+            <p style="color: var(--text-soft); font-size: 14px; margin-bottom: 16px;">
+                กรอกข้อมูลให้เรียบร้อยก่อนกดสุ่มเลือกเมนูนะ 🌸
+            </p>
+            <form id="registerForm" novalidate>
+                <div class="form-row">
+                    <div class="field" id="fld-firstName">
+                        <label>ชื่อ</label>
+                        <input type="text" id="firstName" placeholder="ชื่อจริง" autocomplete="given-name">
+                        <div class="err-msg">กรุณากรอกชื่อ</div>
+                    </div>
+                    <div class="field" id="fld-lastName">
+                        <label>นามสกุล</label>
+                        <input type="text" id="lastName" placeholder="นามสกุล" autocomplete="family-name">
+                        <div class="err-msg">กรุณากรอกนามสกุล</div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="field" id="fld-phone">
+                        <label>เบอร์โทร (PromptPay)</label>
+                        <input type="tel" id="phone" placeholder="0XXXXXXXXX" maxlength="10" inputmode="numeric" autocomplete="tel">
+                        <div class="err-msg">เบอร์ต้อง 10 หลัก ขึ้นต้นด้วย 0</div>
+                    </div>
+                    <div class="field" id="fld-email">
+                        <label>อีเมล</label>
+                        <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+                        <div class="err-msg">รูปแบบอีเมลไม่ถูกต้อง</div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 8px;">
+                    🎉 เริ่มเล่นเลย!
+                </button>
+            </form>
+        </section>
+
+        <!-- After registration -->
+        <div id="mainArea" class="hidden">
+            <div class="welcome">
+                <div class="welcome-text">
+                    👋 สวัสดี <strong id="welcomeName">เพื่อน</strong>!
+                    เบอร์ PromptPay <strong id="welcomePhone">—</strong>
+                </div>
+                <button class="btn btn-ghost" id="editProfileBtn">✏️ แก้ไขข้อมูล</button>
+            </div>
+
+            <section class="card">
+                <div class="card-title">
+                    👥 ผู้เข้าร่วม
+                    <span class="badge">4 คน</span>
+                </div>
+                <div class="participants" id="participantsList"></div>
+            </section>
+
+            <section class="card draw-card">
+                <div class="card-title" style="justify-content: center;">
+                    🎰 สุ่มเวรเลือกเครื่องดื่มประจำสัปดาห์
+                </div>
+                <button class="draw-btn" id="drawBtn">🎲 สุ่มเลย!</button>
+                <div class="draw-hint" id="drawHint">กดเพื่อสุ่มเวรประจำวันจันทร์–ศุกร์</div>
+            </section>
+
+            <section class="card">
+                <div class="card-title">
+                    📅 ตารางประจำสัปดาห์
+                    <span class="badge" id="weekBadge">—</span>
+                </div>
+                <div id="weekArea">
+                    <div class="empty-state">
+                        <div class="emo">🌷</div>
+                        <div>ยังไม่ได้สุ่มเลย กดปุ่ม "สุ่มเลย!" ด้านบนได้เลยจ้า</div>
+                    </div>
+                </div>
+                <div class="reset-bar hidden" id="resetBar">
+                    <button class="btn btn-ghost" id="resetWeekBtn">🔄 เริ่มสัปดาห์ใหม่</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Menu modal -->
+    <div class="modal-backdrop" id="menuModal">
+        <div class="modal">
+            <button class="modal-close" data-close>×</button>
+            <div class="modal-header">
+                <div class="avatar" id="menuAvatar">🌊</div>
+                <h3 id="menuTitle">เลือกเมนูให้ <span id="menuPersonName">—</span></h3>
+                <p id="menuDayLabel">ของวันจันทร์</p>
+            </div>
+
+            <label style="display:block; font-size:13px; color:var(--text-soft); margin-bottom:8px;">หมวดเครื่องดื่ม</label>
+            <div class="category-grid" id="catGrid">
+                <button type="button" class="cat-btn" data-cat="ชานม">
+                    <span class="cat-emoji">🧋</span>
+                    <span class="cat-name">ชานม</span>
+                </button>
+                <button type="button" class="cat-btn" data-cat="โยเกิร์ต">
+                    <span class="cat-emoji">🍦</span>
+                    <span class="cat-name">โยเกิร์ต</span>
+                </button>
+                <button type="button" class="cat-btn" data-cat="กาแฟ">
+                    <span class="cat-emoji">☕</span>
+                    <span class="cat-name">กาแฟ</span>
+                </button>
+            </div>
+
+            <label style="display:block; font-size:13px; color:var(--text-soft); margin-bottom:8px;">เมนูแนะนำ</label>
+            <div class="suggestions" id="suggestions"></div>
+
+            <div class="field" style="margin-bottom: 14px;">
+                <label>รายละเอียดเมนู / หมายเหตุ</label>
+                <input type="text" id="menuNote" placeholder="เช่น ชานมไข่มุก หวานน้อย ร้าน Mixue">
+            </div>
+
+            <div class="form-row">
+                <div class="field">
+                    <label>ยอดรวม (บาท)</label>
+                    <input type="number" id="menuAmount" placeholder="0" min="0" step="1" inputmode="decimal">
+                </div>
+                <div class="field">
+                    <label>เบอร์ PromptPay ของคนเลือก</label>
+                    <input type="tel" id="menuPhone" placeholder="0XXXXXXXXX" maxlength="10" inputmode="numeric">
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-block" id="saveMenuBtn" style="margin-top: 8px;">
+                💾 บันทึก
+            </button>
+        </div>
+    </div>
+
+    <!-- QR modal -->
+    <div class="modal-backdrop" id="qrModal">
+        <div class="modal">
+            <button class="modal-close" data-close>×</button>
+            <div class="modal-header">
+                <div class="avatar">💸</div>
+                <h3>เก็บตังกันเถอะ!</h3>
+                <p id="qrDayLabel">วันจันทร์ • <span id="qrPersonName">—</span></p>
+            </div>
+
+            <div class="summary" id="qrSummary"></div>
+
+            <div class="qr-wrap">
+                <img id="qrImage" alt="QR PromptPay">
+                <div class="qr-amount" id="qrAmount">฿0.00</div>
+                <div class="qr-note">หารกันคนละ • PromptPay <span id="qrPhone">—</span></div>
+            </div>
+
+            <button class="btn btn-block" id="copyPayloadBtn">📋 คัดลอกข้อมูล PromptPay</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ============ Constants ============
+        const PRESET = [
+            { id: 'naam', name: 'พี่น้าม', emoji: '🌊', color: '#4a90e2' },
+            { id: 'prae', name: 'แพร',    emoji: '🌸', color: '#e91e63' },
+            { id: 'fai',  name: 'ฝ้าย',   emoji: '☁️', color: '#9aa6b2' },
+            { id: 'nan',  name: 'นันท์',  emoji: '🌟', color: '#f9a826' },
+        ];
+
+        const DAYS = [
+            { key: 'mon', short: 'จ',  full: 'จันทร์',     en: 'MON' },
+            { key: 'tue', short: 'อ',  full: 'อังคาร',    en: 'TUE' },
+            { key: 'wed', short: 'พ',  full: 'พุธ',       en: 'WED' },
+            { key: 'thu', short: 'พฤ', full: 'พฤหัสบดี', en: 'THU' },
+            { key: 'fri', short: 'ศ',  full: 'ศุกร์',     en: 'FRI' },
+        ];
+
+        const MENU_SUGGEST = {
+            'ชานม':   ['ชานมไข่มุก', 'ชาเขียวมัทฉะ', 'ชาไทย', 'ชานมโอวัลติน', 'ชาลิ้นจี่', 'ชาพีช', 'นมสด'],
+            'โยเกิร์ต': ['โยเกิร์ตสตรอเบอร์รี่', 'โยเกิร์ตบลูเบอร์รี่', 'โยเกิร์ตมะม่วง', 'โยเกิร์ตกรีก', 'สมูทตี้โยเกิร์ต'],
+            'กาแฟ':   ['ลาเต้เย็น', 'อเมริกาโน่', 'คาปูชิโน่', 'มอคค่า', 'คาราเมลมัคคิอาโต้', 'เอสเปรสโซ่'],
+        };
+
+        const STATE_KEY = 'drinkAppState_v1';
+
+        // ============ State ============
+        function loadState() {
+            try {
+                const s = JSON.parse(localStorage.getItem(STATE_KEY));
+                if (s && typeof s === 'object') return Object.assign(defaultState(), s);
+            } catch (_) {}
+            return defaultState();
+        }
+
+        function defaultState() {
+            return {
+                user: null,        // { firstName, lastName, phone, email }
+                week: null,        // { weekStart, days: { mon: personId, ... } }
+                menus: {},         // { mon: { category, note, amount, phone }, ... }
+            };
+        }
+
+        function saveState() {
+            localStorage.setItem(STATE_KEY, JSON.stringify(state));
+        }
+
+        let state = loadState();
+
+        // ============ PromptPay QR ============
+        function tlv(id, value) {
+            const len = String(value.length).padStart(2, '0');
+            return String(id).padStart(2, '0') + len + value;
+        }
+
+        function crc16(str) {
+            let crc = 0xFFFF;
+            for (let i = 0; i < str.length; i++) {
+                crc ^= str.charCodeAt(i) << 8;
+                for (let j = 0; j < 8; j++) {
+                    crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+                    crc &= 0xFFFF;
+                }
+            }
+            return crc.toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        function promptPayPayload(phone, amount) {
+            const cleaned = String(phone || '').replace(/\D/g, '');
+            if (cleaned.length !== 10 || !cleaned.startsWith('0')) return '';
+            const target = '0066' + cleaned.substring(1); // 13 chars
+            const merchant = tlv('00', 'A000000677010111') + tlv('01', target);
+            let payload =
+                tlv('00', '01') +
+                tlv('01', amount ? '12' : '11') +
+                tlv('29', merchant) +
+                tlv('53', '764') +
+                (amount ? tlv('54', Number(amount).toFixed(2)) : '') +
+                tlv('58', 'TH');
+            payload += '6304';
+            return payload + crc16(payload);
+        }
+
+        function qrUrl(payload) {
+            return 'https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=10&data=' + encodeURIComponent(payload);
+        }
+
+        // ============ Validators ============
+        const validators = {
+            firstName: v => v.trim().length > 0,
+            lastName:  v => v.trim().length > 0,
+            phone:     v => /^0\d{9}$/.test(v.trim()),
+            email:     v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()),
+        };
+
+        function setError(id, hasErr) {
+            document.getElementById('fld-' + id).classList.toggle('has-error', hasErr);
+            document.getElementById(id).classList.toggle('error', hasErr);
+        }
+
+        // ============ Registration ============
+        const registerCard = document.getElementById('registerCard');
+        const registerForm = document.getElementById('registerForm');
+        const mainArea = document.getElementById('mainArea');
+
+        function showMainArea() {
+            registerCard.classList.add('hidden');
+            mainArea.classList.remove('hidden');
+            document.getElementById('welcomeName').textContent =
+                state.user.firstName + ' ' + state.user.lastName;
+            document.getElementById('welcomePhone').textContent = state.user.phone;
+            renderParticipants();
+            renderWeek();
+        }
+
+        function showRegisterCard() {
+            registerCard.classList.remove('hidden');
+            mainArea.classList.add('hidden');
+            if (state.user) {
+                document.getElementById('firstName').value = state.user.firstName;
+                document.getElementById('lastName').value = state.user.lastName;
+                document.getElementById('phone').value = state.user.phone;
+                document.getElementById('email').value = state.user.email;
+            }
+        }
+
+        registerForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const data = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName:  document.getElementById('lastName').value.trim(),
+                phone:     document.getElementById('phone').value.trim(),
+                email:     document.getElementById('email').value.trim(),
+            };
+            let firstBad = null;
+            for (const k of Object.keys(validators)) {
+                const ok = validators[k](data[k]);
+                setError(k, !ok);
+                if (!ok && !firstBad) firstBad = k;
+            }
+            if (firstBad) {
+                document.getElementById(firstBad).focus();
+                return;
+            }
+            state.user = data;
+            saveState();
+            showMainArea();
+            toast('🎉 ลงทะเบียนสำเร็จ! เริ่มเล่นกันเลย');
+        });
+
+        ['firstName', 'lastName', 'phone', 'email'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => setError(id, false));
+        });
+
+        document.getElementById('phone').addEventListener('input', e => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        document.getElementById('editProfileBtn').addEventListener('click', showRegisterCard);
+
+        // ============ Participants render ============
+        function renderParticipants() {
+            const wrap = document.getElementById('participantsList');
+            wrap.innerHTML = '';
+            PRESET.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'person';
+                div.id = 'person-' + p.id;
+                const dayKey = Object.entries(state.week?.days || {}).find(([k, v]) => v === p.id)?.[0];
+                const dayObj = DAYS.find(d => d.key === dayKey);
+                div.innerHTML = `
+                    <div class="avatar">${p.emoji}</div>
+                    <div class="name">${p.name}</div>
+                    <div class="meta">${dayObj ? 'เวร' + dayObj.full : 'รอสุ่ม'}</div>
+                `;
+                wrap.appendChild(div);
+            });
+        }
+
+        // ============ Draw logic ============
+        const drawBtn = document.getElementById('drawBtn');
+        const drawHint = document.getElementById('drawHint');
+
+        drawBtn.addEventListener('click', () => {
+            if (drawBtn.disabled) return;
+            drawBtn.disabled = true;
+            drawHint.textContent = '🎬 กำลังสุ่ม...';
+
+            // Reset highlight
+            document.querySelectorAll('.person').forEach(p => p.classList.remove('highlight'));
+
+            // Random assign with repeats allowed (4 people, 5 days)
+            const assigned = {};
+            DAYS.forEach(d => {
+                assigned[d.key] = PRESET[Math.floor(Math.random() * PRESET.length)].id;
+            });
+
+            // Spinning animation
+            let spins = 0;
+            const maxSpins = 18;
+            const interval = setInterval(() => {
+                document.querySelectorAll('.person').forEach(p => p.classList.remove('highlight'));
+                const id = PRESET[Math.floor(Math.random() * PRESET.length)].id;
+                const el = document.getElementById('person-' + id);
+                if (el) el.classList.add('highlight');
+                spins++;
+                if (spins >= maxSpins) {
+                    clearInterval(interval);
+                    document.querySelectorAll('.person').forEach(p => p.classList.remove('highlight'));
+
+                    state.week = { weekStart: new Date().toISOString(), days: assigned };
+                    state.menus = {}; // clear previous menus
+                    saveState();
+                    renderParticipants();
+                    renderWeek();
+                    drawBtn.disabled = false;
+                    drawHint.textContent = '✨ สุ่มเสร็จแล้ว! กดที่การ์ดแต่ละวันเพื่อเลือกเมนู';
+                    launchConfetti();
+                    toast('🎊 สุ่มสำเร็จ! ดูตารางด้านล่างได้เลย');
+                }
+            }, 90);
+        });
+
+        document.getElementById('resetWeekBtn').addEventListener('click', () => {
+            if (!confirm('ล้างตารางสัปดาห์นี้และเริ่มใหม่?')) return;
+            state.week = null;
+            state.menus = {};
+            saveState();
+            renderParticipants();
+            renderWeek();
+            drawHint.textContent = 'กดเพื่อสุ่มเวรประจำวันจันทร์–ศุกร์';
+            toast('🔄 ล้างข้อมูลแล้ว');
+        });
+
+        // ============ Week render ============
+        function findPerson(id) { return PRESET.find(p => p.id === id); }
+
+        function renderWeek() {
+            const area = document.getElementById('weekArea');
+            const resetBar = document.getElementById('resetBar');
+            const weekBadge = document.getElementById('weekBadge');
+
+            if (!state.week) {
+                area.innerHTML = `
+                    <div class="empty-state">
+                        <div class="emo">🌷</div>
+                        <div>ยังไม่ได้สุ่มเลย กดปุ่ม "สุ่มเลย!" ด้านบนได้เลยจ้า</div>
+                    </div>
+                `;
+                resetBar.classList.add('hidden');
+                weekBadge.textContent = '—';
+                return;
+            }
+
+            const wsDate = new Date(state.week.weekStart);
+            weekBadge.textContent = wsDate.toLocaleDateString('th-TH', { day: '2-digit', month: 'short' });
+            resetBar.classList.remove('hidden');
+
+            const grid = document.createElement('div');
+            grid.className = 'week-grid';
+
+            DAYS.forEach(d => {
+                const personId = state.week.days[d.key];
+                const person = findPerson(personId);
+                const menu = state.menus[d.key];
+
+                const card = document.createElement('div');
+                card.className = 'day-card ' + d.key;
+                if (person) {
+                    let menuHtml = '';
+                    if (menu && menu.category) {
+                        const emo = menu.category === 'ชานม' ? '🧋' : menu.category === 'โยเกิร์ต' ? '🍦' : '☕';
+                        menuHtml = `
+                            <div class="day-menu">${emo} ${menu.category}${menu.note ? ' • ' + escapeHtml(menu.note) : ''}</div>
+                            ${menu.amount ? `<div class="day-amount">฿${Number(menu.amount).toLocaleString('th-TH')}</div>` : ''}
+                        `;
+                    }
+                    card.innerHTML = `
+                        <div class="day-label">${d.en} ${d.full}</div>
+                        <div class="day-avatar">${person.emoji}</div>
+                        <div class="day-name">${person.name}</div>
+                        ${menuHtml}
+                        <div class="day-actions">
+                            <button class="day-btn" data-action="menu" data-day="${d.key}">
+                                ${menu ? '✏️ แก้เมนู' : '🍹 เลือกเมนู'}
+                            </button>
+                            ${menu && menu.amount && menu.phone ? `
+                                <button class="day-btn primary" data-action="qr" data-day="${d.key}">💸 เก็บตัง</button>
+                            ` : ''}
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="day-label">${d.en} ${d.full}</div>
+                        <div class="day-avatar empty">❓</div>
+                        <div class="day-name empty">รอสุ่ม</div>
+                    `;
+                }
+                grid.appendChild(card);
+            });
+
+            area.innerHTML = '';
+            area.appendChild(grid);
+        }
+
+        function escapeHtml(s) {
+            return String(s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        }
+
+        // ============ Menu modal ============
+        const menuModal = document.getElementById('menuModal');
+        const qrModal = document.getElementById('qrModal');
+        let activeDay = null;
+        let selectedCat = null;
+
+        document.addEventListener('click', e => {
+            const action = e.target.closest('[data-action]');
+            if (action) {
+                const day = action.dataset.day;
+                if (action.dataset.action === 'menu') openMenu(day);
+                else if (action.dataset.action === 'qr') openQr(day);
+                return;
+            }
+            if (e.target.matches('[data-close]') || e.target.classList.contains('modal-backdrop')) {
+                menuModal.classList.remove('show');
+                qrModal.classList.remove('show');
+            }
+        });
+
+        function openMenu(dayKey) {
+            activeDay = dayKey;
+            const d = DAYS.find(x => x.key === dayKey);
+            const person = findPerson(state.week.days[dayKey]);
+            const existing = state.menus[dayKey] || {};
+
+            document.getElementById('menuAvatar').textContent = person.emoji;
+            document.getElementById('menuPersonName').textContent = person.name;
+            document.getElementById('menuDayLabel').textContent = 'ของวัน' + d.full;
+            document.getElementById('menuNote').value = existing.note || '';
+            document.getElementById('menuAmount').value = existing.amount || '';
+            document.getElementById('menuPhone').value = existing.phone || state.user.phone || '';
+
+            selectedCat = existing.category || null;
+            updateCategoryUI();
+            renderSuggestions();
+
+            menuModal.classList.add('show');
+        }
+
+        function updateCategoryUI() {
+            document.querySelectorAll('#catGrid .cat-btn').forEach(b => {
+                b.classList.toggle('selected', b.dataset.cat === selectedCat);
+            });
+        }
+
+        function renderSuggestions() {
+            const wrap = document.getElementById('suggestions');
+            wrap.innerHTML = '';
+            if (!selectedCat) {
+                wrap.innerHTML = '<span style="color:var(--text-mute); font-size:13px;">เลือกหมวดก่อนเพื่อดูเมนูแนะนำ</span>';
+                return;
+            }
+            MENU_SUGGEST[selectedCat].forEach(name => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'chip';
+                btn.textContent = name;
+                btn.addEventListener('click', () => {
+                    document.getElementById('menuNote').value = name;
+                });
+                wrap.appendChild(btn);
+            });
+        }
+
+        document.querySelectorAll('#catGrid .cat-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                selectedCat = b.dataset.cat;
+                updateCategoryUI();
+                renderSuggestions();
+            });
+        });
+
+        document.getElementById('saveMenuBtn').addEventListener('click', () => {
+            if (!selectedCat) {
+                toast('🙏 เลือกหมวดเครื่องดื่มก่อนนะ');
+                return;
+            }
+            const phone = document.getElementById('menuPhone').value.trim();
+            if (phone && !/^0\d{9}$/.test(phone)) {
+                toast('📞 เบอร์ PromptPay ต้องเป็นเลข 10 หลัก');
+                return;
+            }
+            const amount = parseFloat(document.getElementById('menuAmount').value) || 0;
+            state.menus[activeDay] = {
+                category: selectedCat,
+                note: document.getElementById('menuNote').value.trim(),
+                amount: amount,
+                phone: phone,
+            };
+            saveState();
+            menuModal.classList.remove('show');
+            renderWeek();
+            toast('💾 บันทึกเมนูเรียบร้อย!');
+        });
+
+        // ============ QR modal ============
+        function openQr(dayKey) {
+            const d = DAYS.find(x => x.key === dayKey);
+            const person = findPerson(state.week.days[dayKey]);
+            const menu = state.menus[dayKey];
+            if (!menu || !menu.phone || !menu.amount) {
+                toast('🙏 กรอกยอดและเบอร์ PromptPay ก่อนนะ');
+                return;
+            }
+
+            const totalPeople = PRESET.length;
+            const share = menu.amount / totalPeople;
+
+            document.getElementById('qrDayLabel').innerHTML =
+                'วัน' + d.full + ' • <span id="qrPersonName">' + person.name + '</span> เป็นคนซื้อ';
+            document.getElementById('qrPhone').textContent = menu.phone;
+            document.getElementById('qrAmount').textContent = '฿' + share.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            const summary = document.getElementById('qrSummary');
+            const emo = menu.category === 'ชานม' ? '🧋' : menu.category === 'โยเกิร์ต' ? '🍦' : '☕';
+            summary.innerHTML = `
+                <div class="row"><span>${emo} เมนู</span><span><strong>${menu.category}</strong>${menu.note ? ' — ' + escapeHtml(menu.note) : ''}</span></div>
+                <div class="row"><span>👥 หารกัน</span><span>${totalPeople} คน</span></div>
+                <div class="row"><span>💰 ยอดรวม</span><span>฿${Number(menu.amount).toLocaleString('th-TH', { minimumFractionDigits: 2 })}</span></div>
+                <div class="row total"><span>🧧 ชำระคนละ</span><span>฿${share.toLocaleString('th-TH', { minimumFractionDigits: 2 })}</span></div>
+            `;
+
+            const payload = promptPayPayload(menu.phone, share);
+            const img = document.getElementById('qrImage');
+            if (payload) {
+                img.src = qrUrl(payload);
+                img.dataset.payload = payload;
+            } else {
+                img.src = '';
+                img.dataset.payload = '';
+                toast('⚠️ เบอร์ PromptPay ไม่ถูกต้อง');
+            }
+
+            qrModal.classList.add('show');
+        }
+
+        document.getElementById('copyPayloadBtn').addEventListener('click', async () => {
+            const payload = document.getElementById('qrImage').dataset.payload;
+            if (!payload) return;
+            try {
+                await navigator.clipboard.writeText(payload);
+                toast('📋 คัดลอกข้อมูล PromptPay แล้ว!');
+            } catch (_) {
+                toast('คัดลอกไม่สำเร็จ');
+            }
+        });
+
+        // ============ Confetti ============
+        function launchConfetti() {
+            const colors = ['#ff8da1', '#a8e6cf', '#ffd66b', '#c7a8ff', '#4a90e2', '#e91e63'];
+            for (let i = 0; i < 60; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + '%';
+                c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                c.style.animationDelay = (Math.random() * 0.6) + 's';
+                c.style.animationDuration = (1.6 + Math.random() * 1.2) + 's';
+                c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                document.body.appendChild(c);
+                requestAnimationFrame(() => c.classList.add('go'));
+                setTimeout(() => c.remove(), 3000);
+            }
+        }
+
+        // ============ Toast ============
+        let toastTimer;
+        function toast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+        }
+
+        // ============ Init ============
+        if (state.user) {
+            showMainArea();
+        } else {
+            renderParticipants();
+        }
+    </script>
+</body>
+</html>

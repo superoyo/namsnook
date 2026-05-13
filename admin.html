@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบหลังบ้าน — ผู้ลงทะเบียน</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --border: #ececec;
+            --border-strong: #d8d8d8;
+            --text: #1a1a1a;
+            --text-muted: #8a8a8a;
+            --text-soft: #b5b5b5;
+            --accent: #1a1a1a;
+            --error: #d33f3f;
+            --error-bg: #fff5f5;
+            --hover: #f5f5f5;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 40px 32px;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .nav {
+            margin-bottom: 24px;
+        }
+
+        .nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: var(--text);
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .brand {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-soft);
+            margin-bottom: 8px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card .label {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-card .value {
+            color: var(--text);
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-card .value.small {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .toolbar {
+            background: var(--surface);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--surface);
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--text);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            background: var(--surface);
+            color: var(--text);
+            transition: border-color 0.2s, background 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            border-color: var(--text);
+            background: var(--hover);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .btn-primary:hover {
+            background: #000;
+            border-color: #000;
+        }
+
+        .btn-danger {
+            color: var(--error);
+        }
+
+        .btn-danger:hover {
+            border-color: var(--error);
+            background: var(--error-bg);
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        .table-container {
+            background: var(--surface);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--bg);
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            color: var(--text);
+        }
+
+        th .sort-icon {
+            opacity: 0.3;
+            margin-left: 4px;
+            font-size: 9px;
+        }
+
+        th.sorted .sort-icon {
+            opacity: 1;
+        }
+
+        td {
+            padding: 14px 16px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: var(--hover);
+        }
+
+        .photo-thumb {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: transform 0.15s;
+            display: block;
+        }
+
+        .photo-thumb:hover {
+            transform: scale(1.05);
+        }
+
+        .photo-empty {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1px dashed var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-soft);
+            font-size: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state .icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+
+        a.email-link {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1px solid var(--border);
+        }
+
+        a.email-link:hover {
+            border-bottom-color: var(--text);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 28px;
+            max-width: 380px;
+            width: 100%;
+        }
+
+        .modal h3 {
+            margin-bottom: 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal p {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .photo-modal {
+            background: transparent;
+            padding: 0;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .photo-modal img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 8px;
+            display: block;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 24px 16px; }
+            .stats { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="index.html">← หน้าลงทะเบียน</a>
+        </div>
+
+        <div class="header">
+            <div class="brand">หลังบ้าน</div>
+            <h1>รายชื่อผู้ลงทะเบียน</h1>
+            <p>จัดการข้อมูลผู้ลงทะเบียนทั้งหมด</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="label">ทั้งหมด</div>
+                <div class="value" id="totalCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">วันนี้</div>
+                <div class="value" id="todayCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">ล่าสุด</div>
+                <div class="value small" id="latestTime">-</div>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <input
+                type="text"
+                class="search-box"
+                id="searchInput"
+                placeholder="ค้นหา ชื่อ นามสกุล อีเมล หรือเบอร์โทร..."
+            >
+            <button class="btn" id="refreshBtn">รีเฟรช</button>
+            <button class="btn" id="exportBtn">ดาวน์โหลด CSV</button>
+            <button class="btn btn-danger" id="clearAllBtn">ลบทั้งหมด</button>
+        </div>
+
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-sort="index" style="width:40px;">#</th>
+                            <th data-sort="photo" style="width:60px;">รูป</th>
+                            <th data-sort="firstName">ชื่อ <span class="sort-icon">▼</span></th>
+                            <th data-sort="lastName">นามสกุล <span class="sort-icon">▼</span></th>
+                            <th data-sort="birthDate">วันเกิด <span class="sort-icon">▼</span></th>
+                            <th data-sort="phone">เบอร์โทร <span class="sort-icon">▼</span></th>
+                            <th data-sort="email">อีเมล <span class="sort-icon">▼</span></th>
+                            <th data-sort="submittedAt" class="sorted">ลงทะเบียน <span class="sort-icon">▼</span></th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <h3 id="modalTitle">ยืนยันการลบ</h3>
+            <p id="modalMessage">คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?</p>
+            <div class="modal-actions">
+                <button class="btn" id="cancelBtn">ยกเลิก</button>
+                <button class="btn btn-danger" id="confirmBtn">ยืนยัน</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="photoModal">
+        <div class="photo-modal">
+            <img id="photoModalImg" alt="">
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'surveySubmissions';
+        let allData = [];
+        let filteredData = [];
+        let sortKey = 'submittedAt';
+        let sortDir = 'desc';
+        let pendingAction = null;
+
+        function loadData() {
+            allData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            applyFilterAndSort();
+            renderStats();
+        }
+
+        function applyFilterAndSort() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            filteredData = allData.filter(item => {
+                if (!query) return true;
+                return (
+                    (item.firstName || '').toLowerCase().includes(query) ||
+                    (item.lastName || '').toLowerCase().includes(query) ||
+                    (item.birthDate || '').toLowerCase().includes(query) ||
+                    (item.phone || '').toLowerCase().includes(query) ||
+                    (item.email || '').toLowerCase().includes(query)
+                );
+            });
+
+            filteredData.sort((a, b) => {
+                const av = (a[sortKey] || '').toString().toLowerCase();
+                const bv = (b[sortKey] || '').toString().toLowerCase();
+                if (av < bv) return sortDir === 'asc' ? -1 : 1;
+                if (av > bv) return sortDir === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            renderTable();
+        }
+
+        function formatDate(iso) {
+            if (!iso) return '-';
+            const d = new Date(iso);
+            const pad = n => n.toString().padStart(2, '0');
+            return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        }
+
+        function formatBirthDate(value) {
+            if (!value) return '-';
+            const [y, m, d] = value.split('-');
+            if (!y || !m || !d) return escapeHtml(value);
+            return `${d}/${m}/${y}`;
+        }
+
+        function calcAge(value) {
+            if (!value) return '';
+            const b = new Date(value);
+            const now = new Date();
+            let age = now.getFullYear() - b.getFullYear();
+            const beforeBirthdayThisYear = now.getMonth() < b.getMonth() ||
+                (now.getMonth() === b.getMonth() && now.getDate() < b.getDate());
+            if (beforeBirthdayThisYear) age--;
+            return age;
+        }
+
+        function isToday(iso) {
+            if (!iso) return false;
+            const d = new Date(iso);
+            const today = new Date();
+            return d.toDateString() === today.toDateString();
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str ?? '';
+            return div.innerHTML;
+        }
+
+        function renderStats() {
+            document.getElementById('totalCount').textContent = allData.length;
+            document.getElementById('todayCount').textContent = allData.filter(d => isToday(d.submittedAt)).length;
+            if (allData.length > 0) {
+                const latest = [...allData].sort((a, b) =>
+                    new Date(b.submittedAt) - new Date(a.submittedAt)
+                )[0];
+                document.getElementById('latestTime').textContent = formatDate(latest.submittedAt);
+            } else {
+                document.getElementById('latestTime').textContent = '-';
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+
+            if (filteredData.length === 0) {
+                const message = allData.length === 0
+                    ? 'ยังไม่มีผู้ลงทะเบียน'
+                    : 'ไม่พบข้อมูลที่ค้นหา';
+                tbody.innerHTML = `
+                    <tr><td colspan="9">
+                        <div class="empty-state">
+                            <div class="icon">○</div>
+                            <div>${message}</div>
+                        </div>
+                    </td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredData.map((item, idx) => {
+                const originalIdx = allData.indexOf(item);
+                const photoCell = item.photo
+                    ? `<img class="photo-thumb" src="${item.photo}" alt="" data-photo="${originalIdx}">`
+                    : `<div class="photo-empty">○</div>`;
+                return `
+                    <tr>
+                        <td style="color: var(--text-soft);">${idx + 1}</td>
+                        <td>${photoCell}</td>
+                        <td>${escapeHtml(item.firstName)}</td>
+                        <td>${escapeHtml(item.lastName)}</td>
+                        <td>${formatBirthDate(item.birthDate)}</td>
+                        <td>${escapeHtml(item.phone)}</td>
+                        <td><a class="email-link" href="mailto:${escapeHtml(item.email)}">${escapeHtml(item.email)}</a></td>
+                        <td style="color: var(--text-muted); white-space: nowrap;">${formatDate(item.submittedAt)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" data-action="delete" data-index="${originalIdx}">ลบ</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            pendingAction = onConfirm;
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function hideConfirm() {
+            document.getElementById('confirmModal').classList.remove('active');
+            pendingAction = null;
+        }
+
+        function deleteItem(idx) {
+            allData.splice(idx, 1);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+            applyFilterAndSort();
+            renderStats();
+        }
+
+        function clearAll() {
+            allData = [];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+            applyFilterAndSort();
+            renderStats();
+        }
+
+        function exportCSV() {
+            if (allData.length === 0) {
+                alert('ไม่มีข้อมูลให้ดาวน์โหลด');
+                return;
+            }
+
+            const headers = ['ลำดับ', 'ชื่อ', 'นามสกุล', 'วันเกิด', 'อายุ', 'เบอร์โทรศัพท์', 'อีเมล', 'มีรูป', 'เวลาลงทะเบียน'];
+            const escapeCsv = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+            const rows = allData.map((item, i) => [
+                i + 1,
+                item.firstName,
+                item.lastName,
+                item.birthDate ? formatBirthDate(item.birthDate) : '',
+                item.birthDate ? calcAge(item.birthDate) : '',
+                item.phone,
+                item.email,
+                item.photo ? 'ใช่' : 'ไม่',
+                formatDate(item.submittedAt)
+            ].map(escapeCsv).join(','));
+
+            const csv = '﻿' + [headers.map(escapeCsv).join(','), ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const stamp = new Date().toISOString().slice(0, 10);
+            a.href = url;
+            a.download = `survey-submissions-${stamp}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', applyFilterAndSort);
+        document.getElementById('refreshBtn').addEventListener('click', loadData);
+        document.getElementById('exportBtn').addEventListener('click', exportCSV);
+
+        document.getElementById('clearAllBtn').addEventListener('click', () => {
+            if (allData.length === 0) {
+                alert('ไม่มีข้อมูลให้ลบ');
+                return;
+            }
+            showConfirm(
+                'ยืนยันการลบทั้งหมด',
+                `ลบข้อมูลทั้งหมด ${allData.length} รายการ? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+                clearAll
+            );
+        });
+
+        document.getElementById('tableBody').addEventListener('click', (e) => {
+            const photoThumb = e.target.closest('.photo-thumb');
+            if (photoThumb) {
+                const idx = Number(photoThumb.dataset.photo);
+                document.getElementById('photoModalImg').src = allData[idx].photo;
+                document.getElementById('photoModal').classList.add('active');
+                return;
+            }
+            const btn = e.target.closest('button[data-action="delete"]');
+            if (btn) {
+                const idx = Number(btn.dataset.index);
+                const item = allData[idx];
+                showConfirm(
+                    'ยืนยันการลบ',
+                    `ลบรายการของ "${item.firstName} ${item.lastName}"?`,
+                    () => deleteItem(idx)
+                );
+            }
+        });
+
+        document.getElementById('cancelBtn').addEventListener('click', hideConfirm);
+        document.getElementById('confirmBtn').addEventListener('click', () => {
+            if (pendingAction) pendingAction();
+            hideConfirm();
+        });
+        document.getElementById('confirmModal').addEventListener('click', (e) => {
+            if (e.target.id === 'confirmModal') hideConfirm();
+        });
+        document.getElementById('photoModal').addEventListener('click', () => {
+            document.getElementById('photoModal').classList.remove('active');
+        });
+
+        document.querySelectorAll('th[data-sort]').forEach(th => {
+            th.addEventListener('click', () => {
+                const key = th.dataset.sort;
+                if (key === 'index' || key === 'photo') return;
+                if (sortKey === key) {
+                    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortKey = key;
+                    sortDir = 'asc';
+                }
+                document.querySelectorAll('th[data-sort]').forEach(t => t.classList.remove('sorted'));
+                th.classList.add('sorted');
+                applyFilterAndSort();
+            });
+        });
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === STORAGE_KEY) loadData();
+        });
+
+        loadData();
+    </script>
+</body>
+</html>

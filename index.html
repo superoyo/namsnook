@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงทะเบียน</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --border: #ececec;
+            --text: #1a1a1a;
+            --text-muted: #8a8a8a;
+            --text-soft: #b5b5b5;
+            --accent: #1a1a1a;
+            --accent-hover: #000000;
+            --error: #d33f3f;
+            --success: #2d7a4f;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+        }
+
+        .container {
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .brand {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-soft);
+            margin-bottom: 32px;
+        }
+
+        .progress-wrap {
+            margin-bottom: 40px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .progress-bar {
+            height: 2px;
+            background: var(--border);
+            border-radius: 1px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+
+        .step-hint {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 32px 24px; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        input[type="text"], input[type="tel"], input[type="email"], input[type="date"] {
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            border-radius: 0;
+            font-size: 16px;
+            font-family: inherit;
+            background: transparent;
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, input[type="tel"]:focus,
+        input[type="email"]:focus, input[type="date"]:focus {
+            outline: none;
+            border-bottom-color: var(--accent);
+        }
+
+        input.has-error {
+            border-bottom-color: var(--error);
+        }
+
+        ::placeholder {
+            color: var(--text-soft);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        .shake { animation: shake 0.3s ease-in-out; }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 32px;
+        }
+
+        button {
+            padding: 14px 20px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-back {
+            background: transparent;
+            border-color: var(--border);
+            color: var(--text);
+            flex: 0 0 auto;
+            padding: 14px 18px;
+        }
+
+        .btn-back:hover {
+            background: var(--bg);
+            border-color: var(--text-soft);
+        }
+
+        .photo-zone {
+            border: 1.5px dashed var(--border);
+            border-radius: 12px;
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            position: relative;
+        }
+
+        .photo-zone:hover {
+            border-color: var(--text-soft);
+            background: var(--bg);
+        }
+
+        .photo-zone.has-image {
+            padding: 0;
+            border-style: solid;
+            cursor: default;
+            overflow: hidden;
+        }
+
+        .photo-zone.has-image:hover {
+            border-color: var(--border);
+            background: transparent;
+        }
+
+        .photo-placeholder-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            opacity: 0.4;
+        }
+
+        .photo-placeholder-text {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .photo-placeholder-hint {
+            color: var(--text-soft);
+            font-size: 12px;
+        }
+
+        .photo-preview {
+            width: 100%;
+            display: block;
+            max-height: 320px;
+            object-fit: cover;
+        }
+
+        .photo-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .photo-btn {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .photo-btn:hover {
+            border-color: var(--text);
+            background: var(--bg);
+        }
+
+        .photo-btn.btn-remove {
+            color: var(--error);
+        }
+
+        .photo-btn.btn-remove:hover {
+            border-color: var(--error);
+            background: #fff5f5;
+        }
+
+        .photo-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            height: 0;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 16px 0;
+        }
+
+        .success-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--text);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .success-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .success-text {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text);
+            background: var(--bg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand">ลงทะเบียน</div>
+
+        <div class="progress-wrap" id="progressWrap">
+            <div class="progress-info">
+                <span id="stepLabel">ขั้นตอน 1 / 5</span>
+                <span id="stepPercent">20%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <form id="surveyForm" novalidate>
+            <div class="step active" data-step="1">
+                <div class="step-title">คุณชื่ออะไร?</div>
+                <div class="step-hint">กรอกชื่อและนามสกุลของคุณ</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">ชื่อ</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="ชื่อจริง" required autocomplete="given-name">
+                        <div class="error-message" id="firstNameError">กรุณากรอกชื่อ</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">นามสกุล</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="นามสกุล" required autocomplete="family-name">
+                        <div class="error-message" id="lastNameError">กรุณากรอกนามสกุล</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step" data-step="2">
+                <div class="step-title">วันเกิดของคุณ</div>
+                <div class="step-hint">เลือกวันเดือนปีจากปฏิทิน</div>
+                <div class="form-group">
+                    <label for="birthDate">วันเกิด</label>
+                    <input type="date" id="birthDate" name="birthDate" required autocomplete="bday">
+                    <div class="error-message" id="birthDateError">กรุณาเลือกวันเกิด</div>
+                </div>
+            </div>
+
+            <div class="step" data-step="3">
+                <div class="step-title">เบอร์โทรศัพท์</div>
+                <div class="step-hint">ใช้เพื่อติดต่อกลับ</div>
+                <div class="form-group">
+                    <label for="phone">เบอร์</label>
+                    <input type="tel" id="phone" name="phone" placeholder="0XXXXXXXXX" maxlength="10" required autocomplete="tel" inputmode="numeric">
+                    <div class="error-message" id="phoneError">กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (9-10 หลัก)</div>
+                </div>
+            </div>
+
+            <div class="step" data-step="4">
+                <div class="step-title">อีเมล</div>
+                <div class="step-hint">เราจะส่งการยืนยันไปที่นี่</div>
+                <div class="form-group">
+                    <label for="email">อีเมล</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+                    <div class="error-message" id="emailError">กรุณากรอกอีเมลให้ถูกต้อง</div>
+                </div>
+            </div>
+
+            <div class="step" data-step="5">
+                <div class="step-title">รูปภาพของคุณ</div>
+                <div class="step-hint">ถ่ายรูปด้วยกล้อง หรือเลือกจากเครื่อง</div>
+
+                <div class="photo-zone" id="photoZone">
+                    <div id="photoPlaceholder">
+                        <div class="photo-placeholder-icon">⊕</div>
+                        <div class="photo-placeholder-text">เพิ่มรูปภาพ</div>
+                        <div class="photo-placeholder-hint">คลิกเพื่อถ่ายหรือเลือกไฟล์</div>
+                    </div>
+                    <img class="photo-preview" id="photoPreview" alt="" style="display: none;">
+                </div>
+
+                <input type="file" class="photo-input" id="cameraInput" accept="image/*" capture="environment">
+                <input type="file" class="photo-input" id="fileInput" accept="image/*">
+
+                <div class="photo-actions">
+                    <button type="button" class="photo-btn" id="cameraBtn">📷 ถ่ายรูป</button>
+                    <button type="button" class="photo-btn" id="uploadBtn">🖼 เลือกไฟล์</button>
+                    <button type="button" class="photo-btn btn-remove" id="removeBtn" style="display: none;">ลบ</button>
+                </div>
+                <div class="error-message" id="photoError">กรุณาเพิ่มรูปภาพ</div>
+            </div>
+
+            <div class="actions">
+                <button type="button" class="btn-back" id="backBtn" style="display: none;">ย้อนกลับ</button>
+                <button type="button" class="btn-primary" id="nextBtn">ถัดไป</button>
+            </div>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✓</div>
+            <div class="success-title">ลงทะเบียนสำเร็จ</div>
+            <div class="success-text">ขอบคุณสำหรับข้อมูลของคุณ</div>
+            <button type="button" class="btn-secondary" id="registerAgainBtn">ลงทะเบียนอีกครั้ง</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('surveyForm');
+        const successMessage = document.getElementById('successMessage');
+        const progressWrap = document.getElementById('progressWrap');
+        const stepLabel = document.getElementById('stepLabel');
+        const stepPercent = document.getElementById('stepPercent');
+        const progressFill = document.getElementById('progressFill');
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const steps = Array.from(document.querySelectorAll('.step'));
+        const totalSteps = steps.length;
+
+        const stepFields = {
+            1: ['firstName', 'lastName'],
+            2: ['birthDate'],
+            3: ['phone'],
+            4: ['email'],
+            5: ['photo']
+        };
+
+        let currentStep = 1;
+        let photoDataUrl = null;
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('birthDate').setAttribute('max', today);
+
+        document.getElementById('phone').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function validatePhone(phone) {
+            return /^[0-9]{9,10}$/.test(phone);
+        }
+
+        function showError(fieldId, show) {
+            const err = document.getElementById(fieldId + 'Error');
+            if (err) err.style.display = show ? 'block' : 'none';
+            const input = document.getElementById(fieldId);
+            if (input) input.classList.toggle('has-error', show);
+        }
+
+        function validateField(id) {
+            if (id === 'photo') return !!photoDataUrl;
+            const value = document.getElementById(id).value.trim();
+            if (id === 'phone') return validatePhone(value);
+            if (id === 'email') return validateEmail(value);
+            if (id === 'birthDate') return !!value && value <= today;
+            return !!value;
+        }
+
+        function validateStep(stepNum) {
+            const fields = stepFields[stepNum];
+            let firstInvalid = null;
+            fields.forEach(id => {
+                const ok = validateField(id);
+                showError(id, !ok);
+                if (!ok && !firstInvalid) firstInvalid = id;
+            });
+            return firstInvalid;
+        }
+
+        function renderStep() {
+            steps.forEach(s => s.classList.remove('active'));
+            const active = steps.find(s => Number(s.dataset.step) === currentStep);
+            active.classList.add('active');
+
+            stepLabel.textContent = `ขั้นตอน ${currentStep} / ${totalSteps}`;
+            const pct = Math.round((currentStep / totalSteps) * 100);
+            stepPercent.textContent = `${pct}%`;
+            progressFill.style.width = `${pct}%`;
+
+            backBtn.style.display = currentStep === 1 ? 'none' : 'block';
+            nextBtn.textContent = currentStep === totalSteps ? 'ลงทะเบียน' : 'ถัดไป';
+
+            const firstInput = active.querySelector('input[type="text"], input[type="date"], input[type="tel"], input[type="email"]');
+            if (firstInput) setTimeout(() => firstInput.focus(), 60);
+        }
+
+        ['firstName', 'lastName', 'birthDate', 'phone', 'email'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => {
+                if (document.getElementById(id).classList.contains('has-error')) {
+                    showError(id, false);
+                }
+            });
+        });
+
+        function resizeImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = reject;
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onerror = reject;
+                    img.onload = () => {
+                        const max = 800;
+                        let { width, height } = img;
+                        if (width > max || height > max) {
+                            const ratio = Math.min(max / width, max / height);
+                            width = Math.round(width * ratio);
+                            height = Math.round(height * ratio);
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.8));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handlePhotoFile(file) {
+            if (!file || !file.type.startsWith('image/')) return;
+            try {
+                photoDataUrl = await resizeImage(file);
+                const preview = document.getElementById('photoPreview');
+                preview.src = photoDataUrl;
+                preview.style.display = 'block';
+                document.getElementById('photoPlaceholder').style.display = 'none';
+                document.getElementById('photoZone').classList.add('has-image');
+                document.getElementById('removeBtn').style.display = 'block';
+                showError('photo', false);
+            } catch (err) {
+                console.error('โหลดรูปไม่สำเร็จ:', err);
+            }
+        }
+
+        document.getElementById('cameraBtn').addEventListener('click', () => {
+            document.getElementById('cameraInput').click();
+        });
+
+        document.getElementById('uploadBtn').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('photoZone').addEventListener('click', (e) => {
+            if (e.target.closest('.photo-actions')) return;
+            if (!photoDataUrl) document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('cameraInput').addEventListener('change', (e) => {
+            if (e.target.files[0]) handlePhotoFile(e.target.files[0]);
+            e.target.value = '';
+        });
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            if (e.target.files[0]) handlePhotoFile(e.target.files[0]);
+            e.target.value = '';
+        });
+
+        document.getElementById('removeBtn').addEventListener('click', () => {
+            photoDataUrl = null;
+            document.getElementById('photoPreview').style.display = 'none';
+            document.getElementById('photoPreview').src = '';
+            document.getElementById('photoPlaceholder').style.display = 'block';
+            document.getElementById('photoZone').classList.remove('has-image');
+            document.getElementById('removeBtn').style.display = 'none';
+        });
+
+        function goNext() {
+            const invalid = validateStep(currentStep);
+            if (invalid) {
+                const target = invalid === 'photo'
+                    ? document.getElementById('photoZone')
+                    : document.getElementById(invalid);
+                target.classList.remove('shake');
+                void target.offsetWidth;
+                target.classList.add('shake');
+                if (invalid !== 'photo') target.focus();
+                return;
+            }
+
+            if (currentStep < totalSteps) {
+                currentStep++;
+                renderStep();
+            } else {
+                submitForm();
+            }
+        }
+
+        function goBack() {
+            if (currentStep > 1) {
+                currentStep--;
+                renderStep();
+            }
+        }
+
+        function submitForm() {
+            const data = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                birthDate: document.getElementById('birthDate').value,
+                phone: document.getElementById('phone').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                photo: photoDataUrl,
+                submittedAt: new Date().toISOString()
+            };
+
+            try {
+                const submissions = JSON.parse(localStorage.getItem('surveySubmissions') || '[]');
+                submissions.push(data);
+                localStorage.setItem('surveySubmissions', JSON.stringify(submissions));
+            } catch (err) {
+                console.error('บันทึกข้อมูลไม่สำเร็จ:', err);
+                alert('พื้นที่จัดเก็บเต็ม กรุณาล้างรายการเก่าใน admin');
+                return;
+            }
+
+            console.log('ลงทะเบียนสำเร็จ');
+            form.style.display = 'none';
+            progressWrap.style.display = 'none';
+            successMessage.style.display = 'block';
+        }
+
+        nextBtn.addEventListener('click', goNext);
+        backBtn.addEventListener('click', goBack);
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            goNext();
+        });
+
+        form.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'file') {
+                e.preventDefault();
+                goNext();
+            }
+        });
+
+        document.getElementById('registerAgainBtn').addEventListener('click', () => {
+            form.reset();
+            Object.values(stepFields).flat().forEach(id => showError(id, false));
+            document.getElementById('removeBtn').click();
+            currentStep = 1;
+            successMessage.style.display = 'none';
+            form.style.display = 'block';
+            progressWrap.style.display = 'block';
+            renderStep();
+        });
+
+        renderStep();
+    </script>
+</body>
+</html>
