@@ -730,88 +730,37 @@
             <p>สุ่มคนเลือกเครื่องดื่ม จันทร์–ศุกร์ พร้อม QR เก็บตังแบบขุนทอง 💸</p>
         </div>
 
-        <!-- Registration -->
-        <section class="card" id="registerCard">
+        <section class="card">
             <div class="card-title">
-                ✨ ลงทะเบียนเข้าร่วม
-                <span class="badge">ก่อนเริ่มเล่น</span>
+                👥 ผู้เข้าร่วม
+                <span class="badge">4 คน</span>
             </div>
-            <p style="color: var(--text-soft); font-size: 14px; margin-bottom: 16px;">
-                กรอกข้อมูลให้เรียบร้อยก่อนกดสุ่มเลือกเมนูนะ 🌸
-            </p>
-            <form id="registerForm" novalidate>
-                <div class="form-row">
-                    <div class="field" id="fld-firstName">
-                        <label>ชื่อ</label>
-                        <input type="text" id="firstName" placeholder="ชื่อจริง" autocomplete="given-name">
-                        <div class="err-msg">กรุณากรอกชื่อ</div>
-                    </div>
-                    <div class="field" id="fld-lastName">
-                        <label>นามสกุล</label>
-                        <input type="text" id="lastName" placeholder="นามสกุล" autocomplete="family-name">
-                        <div class="err-msg">กรุณากรอกนามสกุล</div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="field" id="fld-phone">
-                        <label>เบอร์โทร (PromptPay)</label>
-                        <input type="tel" id="phone" placeholder="0XXXXXXXXX" maxlength="10" inputmode="numeric" autocomplete="tel">
-                        <div class="err-msg">เบอร์ต้อง 10 หลัก ขึ้นต้นด้วย 0</div>
-                    </div>
-                    <div class="field" id="fld-email">
-                        <label>อีเมล</label>
-                        <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
-                        <div class="err-msg">รูปแบบอีเมลไม่ถูกต้อง</div>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 8px;">
-                    🎉 เริ่มเล่นเลย!
-                </button>
-            </form>
+            <div class="participants" id="participantsList"></div>
         </section>
 
-        <!-- After registration -->
-        <div id="mainArea" class="hidden">
-            <div class="welcome">
-                <div class="welcome-text">
-                    👋 สวัสดี <strong id="welcomeName">เพื่อน</strong>!
-                    เบอร์ PromptPay <strong id="welcomePhone">—</strong>
-                </div>
-                <button class="btn btn-ghost" id="editProfileBtn">✏️ แก้ไขข้อมูล</button>
+        <section class="card draw-card">
+            <div class="card-title" style="justify-content: center;">
+                🎰 สุ่มเวรเลือกเครื่องดื่มประจำสัปดาห์
             </div>
+            <button class="draw-btn" id="drawBtn">🎲 สุ่มเลย!</button>
+            <div class="draw-hint" id="drawHint">กดเพื่อสุ่มเวรประจำวันจันทร์–ศุกร์</div>
+        </section>
 
-            <section class="card">
-                <div class="card-title">
-                    👥 ผู้เข้าร่วม
-                    <span class="badge">4 คน</span>
+        <section class="card">
+            <div class="card-title">
+                📅 ตารางประจำสัปดาห์
+                <span class="badge" id="weekBadge">—</span>
+            </div>
+            <div id="weekArea">
+                <div class="empty-state">
+                    <div class="emo">🌷</div>
+                    <div>ยังไม่ได้สุ่มเลย กดปุ่ม "สุ่มเลย!" ด้านบนได้เลยจ้า</div>
                 </div>
-                <div class="participants" id="participantsList"></div>
-            </section>
-
-            <section class="card draw-card">
-                <div class="card-title" style="justify-content: center;">
-                    🎰 สุ่มเวรเลือกเครื่องดื่มประจำสัปดาห์
-                </div>
-                <button class="draw-btn" id="drawBtn">🎲 สุ่มเลย!</button>
-                <div class="draw-hint" id="drawHint">กดเพื่อสุ่มเวรประจำวันจันทร์–ศุกร์</div>
-            </section>
-
-            <section class="card">
-                <div class="card-title">
-                    📅 ตารางประจำสัปดาห์
-                    <span class="badge" id="weekBadge">—</span>
-                </div>
-                <div id="weekArea">
-                    <div class="empty-state">
-                        <div class="emo">🌷</div>
-                        <div>ยังไม่ได้สุ่มเลย กดปุ่ม "สุ่มเลย!" ด้านบนได้เลยจ้า</div>
-                    </div>
-                </div>
-                <div class="reset-bar hidden" id="resetBar">
-                    <button class="btn btn-ghost" id="resetWeekBtn">🔄 เริ่มสัปดาห์ใหม่</button>
-                </div>
-            </section>
-        </div>
+            </div>
+            <div class="reset-bar hidden" id="resetBar">
+                <button class="btn btn-ghost" id="resetWeekBtn">🔄 เริ่มสัปดาห์ใหม่</button>
+            </div>
+        </section>
     </div>
 
     <!-- Menu modal -->
@@ -974,79 +923,6 @@
         function qrUrl(payload) {
             return 'https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=10&data=' + encodeURIComponent(payload);
         }
-
-        // ============ Validators ============
-        const validators = {
-            firstName: v => v.trim().length > 0,
-            lastName:  v => v.trim().length > 0,
-            phone:     v => /^0\d{9}$/.test(v.trim()),
-            email:     v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()),
-        };
-
-        function setError(id, hasErr) {
-            document.getElementById('fld-' + id).classList.toggle('has-error', hasErr);
-            document.getElementById(id).classList.toggle('error', hasErr);
-        }
-
-        // ============ Registration ============
-        const registerCard = document.getElementById('registerCard');
-        const registerForm = document.getElementById('registerForm');
-        const mainArea = document.getElementById('mainArea');
-
-        function showMainArea() {
-            registerCard.classList.add('hidden');
-            mainArea.classList.remove('hidden');
-            document.getElementById('welcomeName').textContent =
-                state.user.firstName + ' ' + state.user.lastName;
-            document.getElementById('welcomePhone').textContent = state.user.phone;
-            renderParticipants();
-            renderWeek();
-        }
-
-        function showRegisterCard() {
-            registerCard.classList.remove('hidden');
-            mainArea.classList.add('hidden');
-            if (state.user) {
-                document.getElementById('firstName').value = state.user.firstName;
-                document.getElementById('lastName').value = state.user.lastName;
-                document.getElementById('phone').value = state.user.phone;
-                document.getElementById('email').value = state.user.email;
-            }
-        }
-
-        registerForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const data = {
-                firstName: document.getElementById('firstName').value.trim(),
-                lastName:  document.getElementById('lastName').value.trim(),
-                phone:     document.getElementById('phone').value.trim(),
-                email:     document.getElementById('email').value.trim(),
-            };
-            let firstBad = null;
-            for (const k of Object.keys(validators)) {
-                const ok = validators[k](data[k]);
-                setError(k, !ok);
-                if (!ok && !firstBad) firstBad = k;
-            }
-            if (firstBad) {
-                document.getElementById(firstBad).focus();
-                return;
-            }
-            state.user = data;
-            saveState();
-            showMainArea();
-            toast('🎉 ลงทะเบียนสำเร็จ! เริ่มเล่นกันเลย');
-        });
-
-        ['firstName', 'lastName', 'phone', 'email'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => setError(id, false));
-        });
-
-        document.getElementById('phone').addEventListener('input', e => {
-            e.target.value = e.target.value.replace(/\D/g, '');
-        });
-
-        document.getElementById('editProfileBtn').addEventListener('click', showRegisterCard);
 
         // ============ Participants render ============
         function renderParticipants() {
@@ -1230,7 +1106,7 @@
             document.getElementById('menuDayLabel').textContent = 'ของวัน' + d.full;
             document.getElementById('menuNote').value = existing.note || '';
             document.getElementById('menuAmount').value = existing.amount || '';
-            document.getElementById('menuPhone').value = existing.phone || state.user.phone || '';
+            document.getElementById('menuPhone').value = existing.phone || '';
 
             selectedCat = existing.category || null;
             updateCategoryUI();
@@ -1375,11 +1251,8 @@
         }
 
         // ============ Init ============
-        if (state.user) {
-            showMainArea();
-        } else {
-            renderParticipants();
-        }
+        renderParticipants();
+        renderWeek();
     </script>
 </body>
 </html>
