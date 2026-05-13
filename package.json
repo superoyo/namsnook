@@ -1,0 +1,8 @@
+{
+  "name": "namsnook",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes serve -l tcp://0.0.0.0:${PORT:-3000} ."
+  }
+}
