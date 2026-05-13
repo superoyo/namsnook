@@ -715,6 +715,75 @@
             margin-top: 16px;
         }
 
+        /* === Week nav === */
+        .week-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: auto;
+        }
+
+        .week-nav-btn {
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .week-nav-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .week-display {
+            background: white;
+            border: 2px solid var(--primary-soft);
+            color: var(--text);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+        }
+
+        .week-display:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .week-display .picker {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .week-today-tag {
+            display: inline-block;
+            font-size: 10px;
+            background: var(--accent);
+            color: var(--text);
+            padding: 1px 6px;
+            border-radius: 8px;
+            margin-left: 4px;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -749,7 +818,14 @@
         <section class="card">
             <div class="card-title">
                 📅 ตารางประจำสัปดาห์
-                <span class="badge" id="weekBadge">—</span>
+                <div class="week-nav">
+                    <button class="week-nav-btn" id="prevWeekBtn" title="สัปดาห์ก่อนหน้า">◀</button>
+                    <button class="week-display" id="weekDisplay">
+                        <span id="weekDisplayText">—</span>
+                        <input type="date" id="weekPicker" class="picker">
+                    </button>
+                    <button class="week-nav-btn" id="nextWeekBtn" title="สัปดาห์ถัดไป">▶</button>
+                </div>
             </div>
             <div id="weekArea">
                 <div class="empty-state">
@@ -863,25 +939,76 @@
 
         const STATE_KEY = 'drinkAppState_v1';
 
+        // ============ Week helpers ============
+        function weekStartOf(date) {
+            const d = new Date(date);
+            d.setHours(0, 0, 0, 0);
+            const day = d.getDay(); // 0=Sun, 1=Mon
+            const diff = day === 0 ? -6 : 1 - day;
+            d.setDate(d.getDate() + diff);
+            return d;
+        }
+
+        function weekKey(date) { return weekStartOf(date).toISOString(); }
+        const TODAY_WEEK_KEY = weekKey(new Date());
+
+        function toLocalDateInput(isoKey) {
+            const d = new Date(isoKey);
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
+        function shiftWeek(isoKey, weeks) {
+            const d = new Date(isoKey);
+            d.setDate(d.getDate() + weeks * 7);
+            return weekKey(d);
+        }
+
+        function formatWeekRange(isoKey) {
+            const start = new Date(isoKey);
+            const end = new Date(start);
+            end.setDate(end.getDate() + 4);
+            const opts = { day: '2-digit', month: 'short' };
+            return start.toLocaleDateString('th-TH', opts) + ' – ' + end.toLocaleDateString('th-TH', opts);
+        }
+
         // ============ State ============
         function loadState() {
             try {
                 const s = JSON.parse(localStorage.getItem(STATE_KEY));
-                if (s && typeof s === 'object') return Object.assign(defaultState(), s);
+                if (s && typeof s === 'object') {
+                    // Migrate old { week, menus } single-week format
+                    if (!s.weeks && s.week && s.week.weekStart) {
+                        const migrated = defaultState();
+                        const k = weekKey(s.week.weekStart);
+                        migrated.weeks[k] = { days: s.week.days || {}, menus: s.menus || {} };
+                        migrated.selectedWeek = k;
+                        return migrated;
+                    }
+                    return Object.assign(defaultState(), s);
+                }
             } catch (_) {}
             return defaultState();
         }
 
         function defaultState() {
             return {
-                user: null,        // { firstName, lastName, phone, email }
-                week: null,        // { weekStart, days: { mon: personId, ... } }
-                menus: {},         // { mon: { category, note, amount, phone }, ... }
+                weeks: {},            // { isoWeekStart: { days, menus } }
+                selectedWeek: TODAY_WEEK_KEY,
             };
         }
 
         function saveState() {
             localStorage.setItem(STATE_KEY, JSON.stringify(state));
+        }
+
+        function getWeek() {
+            if (!state.weeks[state.selectedWeek]) {
+                state.weeks[state.selectedWeek] = { days: {}, menus: {} };
+            }
+            return state.weeks[state.selectedWeek];
         }
 
         let state = loadState();
@@ -928,11 +1055,12 @@
         function renderParticipants() {
             const wrap = document.getElementById('participantsList');
             wrap.innerHTML = '';
+            const days = state.weeks[state.selectedWeek]?.days || {};
             PRESET.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'person';
                 div.id = 'person-' + p.id;
-                const dayKey = Object.entries(state.week?.days || {}).find(([k, v]) => v === p.id)?.[0];
+                const dayKey = Object.entries(days).find(([k, v]) => v === p.id)?.[0];
                 const dayObj = DAYS.find(d => d.key === dayKey);
                 div.innerHTML = `
                     <div class="avatar">${p.emoji}</div>
@@ -974,8 +1102,7 @@
                     clearInterval(interval);
                     document.querySelectorAll('.person').forEach(p => p.classList.remove('highlight'));
 
-                    state.week = { weekStart: new Date().toISOString(), days: assigned };
-                    state.menus = {}; // clear previous menus
+                    state.weeks[state.selectedWeek] = { days: assigned, menus: {} };
                     saveState();
                     renderParticipants();
                     renderWeek();
@@ -989,13 +1116,31 @@
 
         document.getElementById('resetWeekBtn').addEventListener('click', () => {
             if (!confirm('ล้างตารางสัปดาห์นี้และเริ่มใหม่?')) return;
-            state.week = null;
-            state.menus = {};
+            delete state.weeks[state.selectedWeek];
             saveState();
             renderParticipants();
             renderWeek();
             drawHint.textContent = 'กดเพื่อสุ่มเวรประจำวันจันทร์–ศุกร์';
             toast('🔄 ล้างข้อมูลแล้ว');
+        });
+
+        // ============ Week navigation ============
+        function changeWeek(newKey) {
+            state.selectedWeek = newKey;
+            saveState();
+            renderParticipants();
+            renderWeek();
+            drawHint.textContent = 'กดเพื่อสุ่มเวรประจำวันจันทร์–ศุกร์';
+        }
+
+        document.getElementById('prevWeekBtn').addEventListener('click', () => {
+            changeWeek(shiftWeek(state.selectedWeek, -1));
+        });
+        document.getElementById('nextWeekBtn').addEventListener('click', () => {
+            changeWeek(shiftWeek(state.selectedWeek, 1));
+        });
+        document.getElementById('weekPicker').addEventListener('change', e => {
+            if (e.target.value) changeWeek(weekKey(e.target.value));
         });
 
         // ============ Week render ============
@@ -1004,31 +1149,37 @@
         function renderWeek() {
             const area = document.getElementById('weekArea');
             const resetBar = document.getElementById('resetBar');
-            const weekBadge = document.getElementById('weekBadge');
+            const display = document.getElementById('weekDisplayText');
+            const picker = document.getElementById('weekPicker');
 
-            if (!state.week) {
+            const isToday = state.selectedWeek === TODAY_WEEK_KEY;
+            display.innerHTML = formatWeekRange(state.selectedWeek) +
+                (isToday ? ' <span class="week-today-tag">วันนี้</span>' : '');
+            picker.value = toLocalDateInput(state.selectedWeek);
+
+            const weekData = state.weeks[state.selectedWeek];
+            const hasDraw = weekData && Object.keys(weekData.days || {}).length > 0;
+
+            if (!hasDraw) {
                 area.innerHTML = `
                     <div class="empty-state">
                         <div class="emo">🌷</div>
-                        <div>ยังไม่ได้สุ่มเลย กดปุ่ม "สุ่มเลย!" ด้านบนได้เลยจ้า</div>
+                        <div>ยังไม่ได้สุ่มสัปดาห์นี้ กดปุ่ม "สุ่มเลย!" ด้านบนได้เลยจ้า</div>
                     </div>
                 `;
                 resetBar.classList.add('hidden');
-                weekBadge.textContent = '—';
                 return;
             }
 
-            const wsDate = new Date(state.week.weekStart);
-            weekBadge.textContent = wsDate.toLocaleDateString('th-TH', { day: '2-digit', month: 'short' });
             resetBar.classList.remove('hidden');
 
             const grid = document.createElement('div');
             grid.className = 'week-grid';
 
             DAYS.forEach(d => {
-                const personId = state.week.days[d.key];
+                const personId = weekData.days[d.key];
                 const person = findPerson(personId);
-                const menu = state.menus[d.key];
+                const menu = weekData.menus[d.key];
 
                 const card = document.createElement('div');
                 card.className = 'day-card ' + d.key;
@@ -1098,8 +1249,9 @@
         function openMenu(dayKey) {
             activeDay = dayKey;
             const d = DAYS.find(x => x.key === dayKey);
-            const person = findPerson(state.week.days[dayKey]);
-            const existing = state.menus[dayKey] || {};
+            const w = getWeek();
+            const person = findPerson(w.days[dayKey]);
+            const existing = w.menus[dayKey] || {};
 
             document.getElementById('menuAvatar').textContent = person.emoji;
             document.getElementById('menuPersonName').textContent = person.name;
@@ -1159,7 +1311,7 @@
                 return;
             }
             const amount = parseFloat(document.getElementById('menuAmount').value) || 0;
-            state.menus[activeDay] = {
+            getWeek().menus[activeDay] = {
                 category: selectedCat,
                 note: document.getElementById('menuNote').value.trim(),
                 amount: amount,
@@ -1174,8 +1326,9 @@
         // ============ QR modal ============
         function openQr(dayKey) {
             const d = DAYS.find(x => x.key === dayKey);
-            const person = findPerson(state.week.days[dayKey]);
-            const menu = state.menus[dayKey];
+            const w = getWeek();
+            const person = findPerson(w.days[dayKey]);
+            const menu = w.menus[dayKey];
             if (!menu || !menu.phone || !menu.amount) {
                 toast('🙏 กรอกยอดและเบอร์ PromptPay ก่อนนะ');
                 return;
